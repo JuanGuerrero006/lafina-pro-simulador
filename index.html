@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>La Fina PRO · Simulador de Rendimiento</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#F7F4ED">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="La Fina PRO">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- ORIENTATION LOCK (mobile only, when in landscape) -->
+<div id="orientation-lock" class="orientation-lock">
+  <div class="orientation-lock-content">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="64" height="64">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+      <line x1="12" y1="18" x2="12.01" y2="18"/>
+    </svg>
+    <h2>Por favor rota tu dispositivo</h2>
+    <p>Esta aplicación funciona mejor en formato vertical.</p>
+  </div>
+</div>
+
+<!-- PIN -->
+<div id="pin" class="pin-screen">
+  <div class="pin-orb pin-orb-1"></div>
+  <div class="pin-orb pin-orb-2"></div>
+  <div class="pin-orb pin-orb-3"></div>
+  <div id="pin-particles"></div>
+
+  <!-- Animated wave at bottom -->
+  <div class="pin-wave">
+    <svg viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,100 C150,40 300,160 450,100 C600,40 750,160 900,100 C1050,40 1200,100 1200,100 L2400,100 C2250,40 2100,160 1950,100 C1800,40 1650,160 1500,100 C1350,40 1200,100 1200,100 L1200,200 L0,200 Z" fill="rgba(217,160,32,0.18)"/>
+    </svg>
+    <svg viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,120 C200,60 400,180 600,120 C800,60 1000,180 1200,120 L2400,120 C2200,60 2000,180 1800,120 C1600,60 1400,180 1200,120 L1200,200 L0,200 Z" fill="rgba(15,35,65,0.10)"/>
+    </svg>
+    <svg viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,140 C250,80 500,180 750,140 C1000,80 1200,140 1200,140 L2400,140 C2150,80 1900,180 1650,140 C1400,80 1200,140 1200,140 L1200,200 L0,200 Z" fill="rgba(255,215,90,0.12)"/>
+    </svg>
+  </div>
+
+  <div class="pin-wrap">
+    <div class="pin-logo">
+      <div class="pin-brand"><em>La</em> Fina<span class="pin-badge">PRO</span></div>
+      <div class="pin-tagline">
+        <div class="pin-line"></div>
+        <span class="pin-tag">Calidad que da resultados</span>
+        <div class="pin-line"></div>
+      </div>
+    </div>
+    <div class="pin-card">
+      <div class="pin-icon" id="pin-lock-icon"></div>
+      <h2 class="pin-ttl">Acceso exclusivo</h2>
+      <p class="pin-sub">Solo para la fuerza de ventas La Fina PRO</p>
+      <label class="pin-lbl" for="pin-inp">Código de acceso</label>
+      <div class="pin-field">
+        <input type="password" id="pin-inp" class="pin-inp" placeholder="Ingresa tu código" autocomplete="off" spellcheck="false">
+        <button class="pin-eye" id="pin-eye" type="button" onclick="toggleEye()"></button>
+      </div>
+      <div class="pin-err" id="pin-err"></div>
+      <button class="pin-btn" onclick="checkPin()">
+        <span>Ingresar</span>
+        <span id="pin-arrow"></span>
+      </button>
+    </div>
+    <p class="pin-foot">© La Fina · Todos los derechos reservados</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <header class="hdr">
+    <button class="hdr-toggle" id="hdr-toggle" onclick="toggleSidebar()" title="Abrir / cerrar parámetros" aria-label="Toggle sidebar">
+      <span id="hdr-toggle-icon"></span>
+    </button>
+    <div class="hdr-logo"><em>La</em> Fina<span class="hdr-pro">PRO</span></div>
+    <div class="hdr-center">
+      <div class="hdr-title">Simulador de Rendimiento · Comparativo de Margarinas</div>
+      <div class="hdr-date" id="hdr-date"></div>
+    </div>
+    <div class="hdr-actions">
+      <button class="hdr-btn" id="reset-btn" onclick="resetAll()" title="Resetear valores"></button>
+      <button class="hdr-btn" id="share-btn" onclick="shareResult()" title="Compartir / Imprimir"></button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <span class="tabs-lbl">Producto:</span>
+    <button class="tab-btn active" onclick="setProd('europea',this)"><span class="tab-dot"></span>Fina Europea</button>
+    <button class="tab-btn" onclick="setProd('hojaldre',this)"><span class="tab-dot"></span>Fina Hojaldre</button>
+    <button class="tab-btn" onclick="setProd('industrial',this)"><span class="tab-dot"></span>Fina Industrial</button>
+    <div class="tabs-vs">vs <strong>Margarina Genérica</strong></div>
+  </nav>
+
+  <div class="body">
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-hdr">
+        <span class="sb-ttl">
+          <span class="sb-ttl-icon" id="sb-ttl-icon"></span>
+          Parámetros del Moje
+        </span>
+      </div>
+      <div class="sb-body">
+
+        <div class="sb-sec">
+          <div class="sb-sec-ttl"><span id="sec-base-icon"></span>Base fija</div>
+          <div class="harina-box">
+            <div>
+              <div class="harina-lbl">Harina base</div>
+              <div class="harina-note">1 arroba · Base de cálculos</div>
+            </div>
+            <div class="harina-val">12.500 g</div>
+          </div>
+        </div>
+
+        <div class="sb-sec">
+          <div class="sb-sec-ttl"><span id="sec-zap-icon"></span>Fórmulas rápidas</div>
+          <div class="preset-grid">
+            <button class="preset-btn" onclick="applyPreset('estandar')"><span id="ic-preset-1"></span>Estándar</button>
+            <button class="preset-btn" onclick="applyPreset('dulce')"><span id="ic-preset-2"></span>Pan Dulce</button>
+            <button class="preset-btn" onclick="applyPreset('molde')"><span id="ic-preset-3"></span>Molde</button>
+            <button class="preset-btn" onclick="applyPreset('croissant')"><span id="ic-preset-4"></span>Croissant</button>
+          </div>
+        </div>
+
+        <div class="sb-sec">
+          <div class="sb-sec-ttl"><span id="sec-beaker-icon"></span>Ingredientes (% sobre harina)</div>
+
+          <div class="ctrl">
+            <div class="ctrl-hdr"><div class="ctrl-name"><span id="ic-margarina"></span>Margarina</div></div>
+            <div class="dual-row">
+              <input type="number" class="num-inp" id="margarina-pct" value="24" min="10" max="35" step="0.5" oninput="onIngrPct('margarina')">
+              <span class="dual-unit">%</span>
+              <span class="dual-sep">=</span>
+              <input type="number" class="num-inp wide" id="margarina-gram" value="3000" min="1250" max="4375" step="50" oninput="onIngrGram('margarina')">
+              <span class="dual-unit">g</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" class="ctrl-range" id="margarina-range" min="10" max="35" value="24" step="0.5" oninput="onIngrRange('margarina')">
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-hdr"><div class="ctrl-name"><span id="ic-azucar"></span>Azúcar</div></div>
+            <div class="dual-row">
+              <input type="number" class="num-inp" id="azucar-pct" value="18" min="5" max="30" step="0.5" oninput="onIngrPct('azucar')">
+              <span class="dual-unit">%</span>
+              <span class="dual-sep">=</span>
+              <input type="number" class="num-inp wide" id="azucar-gram" value="2250" min="625" max="3750" step="50" oninput="onIngrGram('azucar')">
+              <span class="dual-unit">g</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" class="ctrl-range" id="azucar-range" min="5" max="30" value="18" step="0.5" oninput="onIngrRange('azucar')">
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-hdr"><div class="ctrl-name"><span id="ic-sal"></span>Sal</div></div>
+            <div class="dual-row">
+              <input type="number" class="num-inp" id="sal-pct" value="2" min="0.5" max="5" step="0.1" oninput="onIngrPct('sal')">
+              <span class="dual-unit">%</span>
+              <span class="dual-sep">=</span>
+              <input type="number" class="num-inp wide" id="sal-gram" value="250" min="62" max="625" step="10" oninput="onIngrGram('sal')">
+              <span class="dual-unit">g</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" class="ctrl-range" id="sal-range" min="0.5" max="5" value="2" step="0.1" oninput="onIngrRange('sal')">
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-hdr"><div class="ctrl-name"><span id="ic-levadura"></span>Levadura</div></div>
+            <div class="dual-row">
+              <input type="number" class="num-inp" id="levadura-pct" value="2" min="0.5" max="5" step="0.1" oninput="onIngrPct('levadura')">
+              <span class="dual-unit">%</span>
+              <span class="dual-sep">=</span>
+              <input type="number" class="num-inp wide" id="levadura-gram" value="250" min="62" max="625" step="10" oninput="onIngrGram('levadura')">
+              <span class="dual-unit">g</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" class="ctrl-range" id="levadura-range" min="0.5" max="5" value="2" step="0.1" oninput="onIngrRange('levadura')">
+            </div>
+          </div>
+        </div>
+
+        <div class="sb-sec">
+          <div class="sb-sec-ttl"><span id="sec-drop-icon"></span>Agua en la receta</div>
+
+          <div class="ctrl water-gen" style="margin-bottom:.5rem">
+            <div class="ctrl-hdr">
+              <div class="ctrl-name"><span id="ic-aguagen"></span>Agua · Genérica</div>
+              <span class="water-badge gen">máx. 45%</span>
+            </div>
+            <div class="dual-row">
+              <input type="number" class="num-inp" id="aguagen-pct" value="40" min="20" max="50" step="0.5" oninput="onWaterPct('gen')">
+              <span class="dual-unit">%</span>
+              <span class="dual-sep">=</span>
+              <input type="number" class="num-inp wide" id="aguagen-gram" value="5000" min="2500" max="6250" step="50" oninput="onWaterGram('gen')">
+              <span class="dual-unit">g</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" class="ctrl-range gen" id="aguagen-range" min="20" max="50" value="40" step="0.5" oninput="onWaterRange('gen')">
+            </div>
+            <div class="water-alert" id="warn-gen"></div>
+          </div>
+
+          <div class="ctrl water-pro">
+            <div class="ctrl-hdr">
+              <div class="ctrl-name"><span id="ic-aguapro"></span>Agua · La Fina PRO</div>
+              <span class="water-badge pro">máx. 53%</span>
+            </div>
+            <div class="dual-row">
+              <input type="number" class="num-inp" id="aguapro-pct" value="48" min="20" max="56" step="0.5" oninput="onWaterPct('pro')">
+              <span class="dual-unit">%</span>
+              <span class="dual-sep">=</span>
+              <input type="number" class="num-inp wide" id="aguapro-gram" value="6000" min="2500" max="7000" step="50" oninput="onWaterGram('pro')">
+              <span class="dual-unit">g</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" class="ctrl-range" id="aguapro-range" min="20" max="56" value="48" step="0.5" oninput="onWaterRange('pro')">
+            </div>
+            <div class="water-alert ok show" id="ok-pro">
+              La Fina PRO soporta hasta <strong>53%</strong> de agua — 8 puntos más
+            </div>
+            <div class="water-alert" id="warn-pro"></div>
+          </div>
+        </div>
+
+        <div class="sb-sec">
+          <div class="sb-sec-ttl"><span id="sec-scale-icon"></span>Peso por pan</div>
+          <div class="gramaje-pills">
+            <button class="g-pill" data-g="50" onclick="setGramaje(50)">50g</button>
+            <button class="g-pill" data-g="75" onclick="setGramaje(75)">75g</button>
+            <button class="g-pill active" data-g="80" onclick="setGramaje(80)">80g</button>
+            <button class="g-pill" data-g="100" onclick="setGramaje(100)">100g</button>
+            <button class="g-pill" data-g="125" onclick="setGramaje(125)">125g</button>
+            <button class="g-pill" data-g="150" onclick="setGramaje(150)">150g</button>
+          </div>
+          <div class="gramaje-row">
+            <span class="gramaje-unit">Otro:</span>
+            <input type="number" id="gramaje-inp" class="gramaje-inp" value="80" min="20" max="800" oninput="onGramajeInp()">
+            <span class="gramaje-unit">g / pan</span>
+          </div>
+        </div>
+
+        <div class="sb-sec">
+          <div class="sb-sec-ttl"><span id="sec-calendar-icon"></span>Producción del panadero</div>
+          <div class="mojes-input">
+            <span class="mojes-input-lbl">Mojes / día</span>
+            <input type="number" class="mojes-input-field" id="mojes-day" value="3" min="1" max="50" oninput="onMojesDay()">
+          </div>
+        </div>
+
+        <div class="sb-sec">
+          <div class="sb-sec-ttl"><span id="sec-dollar-icon"></span>Precios (COP)</div>
+
+          <div class="price-blk">
+            <div class="price-lbl"><span class="pdot gen"></span>Genérica · costo total / moje</div>
+            <div class="price-row">
+              <span class="price-sym">$</span>
+              <input type="number" class="price-inp" id="p-gen" value="120000" step="1000" oninput="onPrice('p-gen')">
+              <span class="price-suf">COP / moje</span>
+            </div>
+            <div class="price-hint">Total margarina genérica para 12,500g harina</div>
+          </div>
+
+          <div class="price-blk">
+            <div class="price-lbl" style="color:var(--gold-3)"><span class="pdot pro"></span>La Fina PRO · costo total / moje</div>
+            <div class="price-row">
+              <span class="price-sym">$</span>
+              <input type="number" class="price-inp" id="p-pro" value="130000" step="1000" oninput="onPrice('p-pro')">
+              <span class="price-suf">COP / moje</span>
+            </div>
+            <div class="price-hint">Total La Fina PRO para 12,500g harina</div>
+          </div>
+
+          <div class="price-blk">
+            <div class="price-lbl">Precio venta por pan</div>
+            <div class="price-row">
+              <span class="price-sym">$</span>
+              <input type="number" class="price-inp" id="p-pan" value="500" step="50" oninput="onPrice('p-pan')">
+              <span class="price-suf">COP / pan</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <section class="bars-card js-hidden">
+        <div class="bars-head">
+          <div class="bars-ttl">Comparación de rendimiento</div>
+          <div class="bars-sub">Producción estimada de panes por moje (12,500g de harina)</div>
+          <div class="bars-legend">
+            <div class="leg-item"><span class="leg-dot gen"></span>Margarina Genérica</div>
+            <div class="leg-item"><span class="leg-dot pro"></span><span id="prod-leg">La Fina Pro</span></div>
+          </div>
+        </div>
+        <div class="bars-area">
+          <div class="bars-chart">
+            <div class="bar-col">
+              <div class="bar-shape gen" id="bar-shape-gen" style="height:0">
+                <span class="bar-num" id="bar-num-gen" data-v="0">0</span>
+              </div>
+              <div class="bar-label">Genérica</div>
+            </div>
+            <div class="bar-col">
+              <div class="crown" id="crown-icon"></div>
+              <div class="bar-shape pro" id="bar-shape-pro" style="height:0">
+                <span class="bar-num" id="bar-num-pro" data-v="0">0</span>
+              </div>
+              <div class="bar-label" id="prod-bar">La Fina PRO</div>
+            </div>
+          </div>
+          <div class="bars-info">
+            <div class="info-banner">
+              <div class="info-banner-icon" id="ib-icon-1"></div>
+              <div class="info-banner-lbl">Panes adicionales</div>
+              <div class="info-banner-val" id="info-extra-panes">+0</div>
+              <div class="info-banner-tag">unidades por moje con PRO</div>
+            </div>
+            <div class="info-banner">
+              <div class="info-banner-icon" id="ib-icon-2"></div>
+              <div class="info-banner-lbl">Mejora porcentual</div>
+              <div class="info-banner-val" id="info-extra-pct">+0%</div>
+              <div class="info-banner-tag">más rendimiento por arroba</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="trophy js-hidden">
+        <div class="trophy-icon" id="trophy-icon"></div>
+        <div class="trophy-text">
+          <div class="trophy-msg" id="trophy-msg"></div>
+        </div>
+      </div>
+
+      <section class="gauges-card js-hidden">
+        <div class="gauges-head">
+          <div class="gauges-head-left">
+            <div class="gauges-ttl">Producción por moje</div>
+            <div class="gauges-sub">Panes producidos y ganancia por arroba de harina</div>
+          </div>
+        </div>
+        <div class="gauges-body">
+          <div class="gauges-row">
+            <div class="gauge-col">
+              <div class="gauge-col-ttl gen">Con Genérica</div>
+              <div class="gauge-canvas">
+                <svg class="gauge-svg" viewBox="0 0 200 130" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <linearGradient id="grad-gen" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#95A4B5"/>
+                      <stop offset="100%" stop-color="#5C6E80"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="rgba(10,24,38,0.07)" stroke-width="18" stroke-linecap="round"/>
+                  <path class="gauge-fill" id="gauge-fill-gen" d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="url(#grad-gen)" stroke-width="18" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+                </svg>
+                <div class="gauge-pct gen" id="gauge-gen-pct">0</div>
+              </div>
+              <div class="gauge-amount gen" id="gauge-gen-amount">$ 0</div>
+              <div class="gauge-tag">Ingreso bruto / moje</div>
+            </div>
+            <div class="gauge-col">
+              <div class="gauge-col-ttl pro">Con <span id="prod-gauge">La Fina PRO</span></div>
+              <div class="gauge-canvas">
+                <svg class="gauge-svg" viewBox="0 0 200 130" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <linearGradient id="grad-pro" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#FFD75A"/>
+                      <stop offset="100%" stop-color="#D9A020"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="rgba(10,24,38,0.07)" stroke-width="18" stroke-linecap="round"/>
+                  <path class="gauge-fill" id="gauge-fill-pro" d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="url(#grad-pro)" stroke-width="18" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+                </svg>
+                <div class="gauge-pct pro" id="gauge-pro-pct">0</div>
+              </div>
+              <div class="gauge-amount pro" id="gauge-pro-amount">$ 0</div>
+              <div class="gauge-tag">Ingreso bruto / moje</div>
+            </div>
+          </div>
+
+          <!-- Projection: vertical on desktop, horizontal on mobile/tablet -->
+          <div class="projection-bar">
+            <div class="projection-label">Ganancia adicional<br>con La Fina PRO</div>
+            <div class="projection-items">
+              <div class="proj-item">
+                <span class="proj-item-lbl">Día</span>
+                <b id="proj-day">+$ 0</b>
+              </div>
+              <div class="proj-divider"></div>
+              <div class="proj-item">
+                <span class="proj-item-lbl">Mes</span>
+                <b id="proj-month">+$ 0</b>
+              </div>
+              <div class="proj-divider"></div>
+              <div class="proj-item">
+                <span class="proj-item-lbl">Año</span>
+                <b id="proj-year">+$ 0</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
