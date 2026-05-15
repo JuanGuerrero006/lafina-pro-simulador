@@ -139,17 +139,37 @@
         <div class="sb-sec">
           <div class="sb-sec-ttl"><span id="sec-beaker-icon"></span>Ingredientes (% sobre harina)</div>
 
-          <div class="ctrl">
-            <div class="ctrl-hdr"><div class="ctrl-name"><span id="ic-margarina"></span>Margarina</div></div>
+          <div class="ctrl marg-gen" style="margin-bottom:.5rem">
+            <div class="ctrl-hdr">
+              <div class="ctrl-name"><span id="ic-margarina"></span>Margarina · Genérica</div>
+              <span class="water-badge gen">máx. 100%</span>
+            </div>
             <div class="dual-row">
-              <input type="number" class="num-inp" id="margarina-pct" value="24" min="10" max="35" step="0.5" oninput="onIngrPct('margarina')">
+              <input type="number" class="num-inp" id="margarinagen-pct" value="24" min="1" max="100" step="0.5" oninput="onMargPct('gen')">
               <span class="dual-unit">%</span>
               <span class="dual-sep">=</span>
-              <input type="number" class="num-inp wide" id="margarina-gram" value="3000" min="1250" max="4375" step="50" oninput="onIngrGram('margarina')">
+              <input type="number" class="num-inp wide" id="margarinagen-gram" value="3000" min="125" max="12500" step="50" oninput="onMargGram('gen')">
               <span class="dual-unit">g</span>
             </div>
             <div class="range-wrap">
-              <input type="range" class="ctrl-range" id="margarina-range" min="10" max="35" value="24" step="0.5" oninput="onIngrRange('margarina')">
+              <input type="range" class="ctrl-range gen" id="margarinagen-range" min="1" max="100" value="24" step="0.5" oninput="onMargRange('gen')">
+            </div>
+          </div>
+
+          <div class="ctrl marg-pro">
+            <div class="ctrl-hdr">
+              <div class="ctrl-name"><span id="ic-margarinapro"></span>Margarina · La Fina PRO</div>
+              <span class="water-badge pro">máx. 100%</span>
+            </div>
+            <div class="dual-row">
+              <input type="number" class="num-inp" id="margarinapro-pct" value="24" min="1" max="100" step="0.5" oninput="onMargPct('pro')">
+              <span class="dual-unit">%</span>
+              <span class="dual-sep">=</span>
+              <input type="number" class="num-inp wide" id="margarinapro-gram" value="3000" min="125" max="12500" step="50" oninput="onMargGram('pro')">
+              <span class="dual-unit">g</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" class="ctrl-range" id="margarinapro-range" min="1" max="100" value="24" step="0.5" oninput="onMargRange('pro')">
             </div>
           </div>
 
