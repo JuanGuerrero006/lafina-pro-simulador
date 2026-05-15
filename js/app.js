@@ -30,7 +30,8 @@ const TROPHY_MSGS = [
 
 const DEFAULTS = {
   product: 'europea',
-  margarina: 24, azucar: 18, sal: 2, levadura: 2,
+  margarinagen: 24, margarinapro: 24,
+  azucar: 18, sal: 2, levadura: 2,
   aguaGen: 40, aguaPro: 48,
   gramaje: 80,
   mojesDay: 3,
@@ -169,10 +170,10 @@ window.addEventListener('resize', () => {
 
 /* PRESETS */
 const PRESETS = {
-  estandar:  { margarina:24, azucar:18, sal:2,   levadura:2,   aguaGen:40, aguaPro:48, gramaje:80 },
-  dulce:     { margarina:28, azucar:25, sal:1.5, levadura:2.5, aguaGen:38, aguaPro:46, gramaje:80 },
-  molde:     { margarina:20, azucar:12, sal:2.5, levadura:1.5, aguaGen:42, aguaPro:50, gramaje:100 },
-  croissant: { margarina:35, azucar:10, sal:2,   levadura:1.5, aguaGen:36, aguaPro:44, gramaje:75 },
+  estandar:  { margarinagen:24, margarinapro:24, azucar:18, sal:2,   levadura:2,   aguaGen:40, aguaPro:48, gramaje:80 },
+  dulce:     { margarinagen:28, margarinapro:28, azucar:25, sal:1.5, levadura:2.5, aguaGen:38, aguaPro:46, gramaje:80 },
+  molde:     { margarinagen:20, margarinapro:20, azucar:12, sal:2.5, levadura:1.5, aguaGen:42, aguaPro:50, gramaje:100 },
+  croissant: { margarinagen:35, margarinapro:35, azucar:10, sal:2,   levadura:1.5, aguaGen:36, aguaPro:44, gramaje:75 },
 };
 function applyPreset(k) {
   const p = PRESETS[k]; if (!p) return;
@@ -214,7 +215,6 @@ function shareResult() {
 }
 
 const CFG = {
-  margarina: { min:10, max:35, step:.5 },
   azucar:    { min:5,  max:30, step:.5 },
   sal:       { min:.5, max:5,  step:.1 },
   levadura:  { min:.5, max:5,  step:.1 },
@@ -222,6 +222,8 @@ const CFG = {
 
 function syncAll() {
   Object.keys(CFG).forEach(n => syncIngr(n, S[n]));
+  syncMarg('gen', S.margarinagen);
+  syncMarg('pro', S.margarinapro);
   syncWater('gen', S.aguaGen);
   syncWater('pro', S.aguaPro);
   syncGramaje(S.gramaje);
@@ -231,6 +233,21 @@ function syncAll() {
     const el = $(id); if (el) el.value = S[map[id]];
   });
 }
+
+function syncMarg(side, pct, skip) {
+  const isGen = side === 'gen';
+  pct = clamp(parseFloat(pct) || 1, 1, 100);
+  S[isGen ? 'margarinagen' : 'margarinapro'] = pct;
+  const g = Math.round(HARINA * pct / 100);
+  const pfx = 'margarina' + side;
+  if (skip !== 'pct')   setVal(pfx + '-pct', pct);
+  if (skip !== 'gram')  setVal(pfx + '-gram', g);
+  if (skip !== 'range') setVal(pfx + '-range', pct);
+  updateTrack(pfx + '-range', pct, 1, 100, isGen);
+}
+function onMargPct(s)   { syncMarg(s, $('margarina'+s+'-pct').value, 'pct'); recalc(); }
+function onMargGram(s)  { syncMarg(s, (parseFloat($('margarina'+s+'-gram').value)||0)/HARINA*100, 'gram'); recalc(); }
+function onMargRange(s) { syncMarg(s, $('margarina'+s+'-range').value, 'range'); recalc(); }
 
 function syncIngr(name, pct, skip) {
   const c = CFG[name];
@@ -329,15 +346,15 @@ function pctFmt(n, dec=1) { return n.toFixed(dec) + '%'; }
 
 function recalc() {
   const m = S;
-  const gMarg = HARINA * m.margarina / 100;
+  const gMargGen = HARINA * m.margarinagen / 100;
+  const gMargPro = HARINA * m.margarinapro / 100;
   const gAzu = HARINA * m.azucar / 100;
   const gSal = HARINA * m.sal / 100;
   const gLev = HARINA * m.levadura / 100;
   const gAGen = HARINA * m.aguaGen / 100;
   const gAPro = HARINA * m.aguaPro / 100;
-  const base = HARINA + gMarg + gAzu + gSal + gLev;
-  const masaGen = base + gAGen;
-  const masaPro = base + gAPro;
+  const masaGen = HARINA + gMargGen + gAzu + gSal + gLev + gAGen;
+  const masaPro = HARINA + gMargPro + gAzu + gSal + gLev + gAPro;
   const g = Math.max(10, m.gramaje);
   const panesGen = Math.max(0, Math.floor(masaGen / g));
   const panesPro = Math.max(0, Math.floor(masaPro / g));
@@ -536,6 +553,7 @@ function injectIcons() {
   set('sec-calendar-icon', ICONS.calendar);
   set('sec-dollar-icon', ICONS.dollar);
   set('ic-margarina', ICONS.butter);
+  set('ic-margarinapro', ICONS.butter);
   set('ic-azucar', ICONS.sugar);
   set('ic-sal', ICONS.salt);
   set('ic-levadura', ICONS.yeast);
