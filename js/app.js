@@ -3,7 +3,7 @@
    ===================================================== */
 'use strict';
 
-const HARINA = 12500;
+let HARINA = 12500;
 const AGUA_MAX_GEN = 50;
 const AGUA_MAX_PRO = 58;
 const PIN_HASH = 'RklOQVBSTzIwMjY=';
@@ -30,6 +30,7 @@ const TROPHY_MSGS = [
 
 const DEFAULTS = {
   product: 'europea',
+  harina: 12500,
   margarinagen: 24, margarinapro: 24,
   azucar: 18, sal: 2, levadura: 2,
   aguaGen: 40, aguaPro: 48,
@@ -184,6 +185,7 @@ function applyPreset(k) {
 
 function resetAll() {
   Object.assign(S, DEFAULTS);
+  HARINA = S.harina;
   syncAll();
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
     b.classList.toggle('active', i === 0);
@@ -221,6 +223,8 @@ const CFG = {
 };
 
 function syncAll() {
+  // Sync harina input
+  const hEl = $('harina-val'); if (hEl) hEl.value = S.harina;
   Object.keys(CFG).forEach(n => syncIngr(n, S[n]));
   syncMarg('gen', S.margarinagen);
   syncMarg('pro', S.margarinapro);
@@ -232,6 +236,21 @@ function syncAll() {
   Object.keys(map).forEach(id => {
     const el = $(id); if (el) el.value = S[map[id]];
   });
+}
+
+function onHarina() {
+  const v = parseFloat($('harina-val').value);
+  if (!isNaN(v) && v >= 100 && v <= 100000) {
+    HARINA = v;
+    S.harina = v;
+    // Re-sync all gram displays to reflect new harina
+    syncMarg('gen', S.margarinagen);
+    syncMarg('pro', S.margarinapro);
+    Object.keys(CFG).forEach(n => syncIngr(n, S[n]));
+    syncWater('gen', S.aguaGen);
+    syncWater('pro', S.aguaPro);
+    recalc();
+  }
 }
 
 function syncMarg(side, pct, skip) {
