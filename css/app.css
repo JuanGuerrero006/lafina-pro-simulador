@@ -554,10 +554,22 @@ body > * { position: relative; z-index: 1; }
 .sb-sec-ttl { font-size: .58rem; letter-spacing: 2.2px; text-transform: uppercase; font-weight: 700; color: var(--gold-2); margin-bottom: .55rem; display: flex; align-items: center; gap: .4rem; }
 .sb-sec-ttl svg { color: var(--gold-2); }
 
-.harina-box { background: linear-gradient(135deg, rgba(217,160,32,.16), rgba(217,160,32,.06)); border: 1px solid var(--gold-line); border-radius: var(--r-sm); padding: .65rem .85rem; display: flex; align-items: center; justify-content: space-between; }
+.harina-box { background: linear-gradient(135deg, rgba(217,160,32,.16), rgba(217,160,32,.06)); border: 1px solid var(--gold-line); border-radius: var(--r-sm); padding: .65rem .85rem; display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
 .harina-lbl { font-size: .73rem; color: var(--nav-text); font-weight: 500; }
 .harina-note { font-size: .6rem; color: var(--nav-text-2); margin-top: .1rem; }
-.harina-val { font-family: var(--sans); font-size: 1.05rem; font-weight: 700; color: var(--gold-3); letter-spacing: -.3px; }
+.harina-inp-wrap { display: flex; align-items: center; gap: .25rem; flex-shrink: 0; }
+.harina-inp {
+  font-family: var(--sans); font-size: 1rem; font-weight: 700;
+  color: var(--gold-3); letter-spacing: -.3px;
+  background: transparent; border: none; border-bottom: 1.5px solid var(--gold-line);
+  width: 72px; text-align: right; padding: .05rem .1rem;
+  outline: none; transition: border-color .2s;
+  -moz-appearance: textfield;
+}
+.harina-inp::-webkit-outer-spin-button,
+.harina-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.harina-inp:focus { border-bottom-color: var(--gold); }
+.harina-unit { font-size: .7rem; color: var(--nav-text-2); font-weight: 600; }
 
 .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; }
 .preset-btn { background: var(--nav-bg-2); color: var(--nav-text-2); border-radius: var(--r-xs); padding: .42rem .5rem; font-size: .7rem; font-weight: 600; transition: var(--t-fast); display: flex; align-items: center; justify-content: center; gap: .35rem; }
