@@ -258,9 +258,14 @@ function syncMarg(side, pct, skip) {
   pct = clamp(parseFloat(pct) || 1, 1, 100);
   S[isGen ? 'margarinagen' : 'margarinapro'] = pct;
   const g = Math.round(HARINA * pct / 100);
+  const gMax = Math.round(HARINA); // 100% of harina
   const pfx = 'margarina' + side;
   if (skip !== 'pct')   setVal(pfx + '-pct', pct);
-  if (skip !== 'gram')  setVal(pfx + '-gram', g);
+  if (skip !== 'gram') {
+    setVal(pfx + '-gram', g);
+    const gEl = $(pfx + '-gram');
+    if (gEl) { gEl.min = 1; gEl.max = gMax; }
+  }
   if (skip !== 'range') setVal(pfx + '-range', pct);
   updateTrack(pfx + '-range', pct, 1, 100, isGen);
 }
@@ -273,8 +278,14 @@ function syncIngr(name, pct, skip) {
   pct = clamp(parseFloat(pct) || c.min, c.min, c.max);
   S[name] = pct;
   const g = Math.round(HARINA * pct / 100);
+  const gMin = Math.round(HARINA * c.min / 100);
+  const gMax = Math.round(HARINA * c.max / 100);
   if (skip !== 'pct')   setVal(name + '-pct', pct);
-  if (skip !== 'gram')  setVal(name + '-gram', g);
+  if (skip !== 'gram') {
+    setVal(name + '-gram', g);
+    const gEl = $(name + '-gram');
+    if (gEl) { gEl.min = gMin; gEl.max = gMax; }
+  }
   if (skip !== 'range') setVal(name + '-range', pct);
   updateTrack(name + '-range', pct, c.min, c.max, false);
 }
@@ -284,15 +295,22 @@ function onIngrRange(n) { syncIngr(n, $(n+'-range').value, 'range'); recalc(); }
 
 function syncWater(side, pct, skip) {
   const isGen = side === 'gen';
-  const max = isGen ? 50 : 60;
-  pct = clamp(parseFloat(pct) || 20, 20, max);
+  const maxPct = isGen ? 50 : 60;
+  const minPct = 20;
+  pct = clamp(parseFloat(pct) || minPct, minPct, maxPct);
   S[isGen ? 'aguaGen' : 'aguaPro'] = pct;
   const g = Math.round(HARINA * pct / 100);
+  const gMin = Math.round(HARINA * minPct / 100);
+  const gMax = Math.round(HARINA * maxPct / 100);
   const pfx = 'agua' + side;
   if (skip !== 'pct')   setVal(pfx + '-pct', pct);
-  if (skip !== 'gram')  setVal(pfx + '-gram', g);
+  if (skip !== 'gram') {
+    setVal(pfx + '-gram', g);
+    const gEl = $(pfx + '-gram');
+    if (gEl) { gEl.min = gMin; gEl.max = gMax; }
+  }
   if (skip !== 'range') setVal(pfx + '-range', pct);
-  updateTrack(pfx + '-range', pct, 20, max, isGen);
+  updateTrack(pfx + '-range', pct, minPct, maxPct, isGen);
   if (isGen) {
     const w = $('warn-gen'); if (!w) return;
     if (pct > AGUA_MAX_GEN) {
