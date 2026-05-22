@@ -120,9 +120,12 @@
           <div class="harina-box">
             <div>
               <div class="harina-lbl">Harina base</div>
-              <div class="harina-note">1 arroba · Base de cálculos</div>
+              <div class="harina-note">Base de cálculos</div>
             </div>
-            <div class="harina-val">12.500 g</div>
+            <div class="harina-inp-wrap">
+              <input type="number" class="harina-inp" id="harina-val" value="12500" min="100" max="100000" step="100" oninput="onHarina()">
+              <span class="harina-unit">g</span>
+            </div>
           </div>
         </div>
 
