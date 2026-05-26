@@ -225,40 +225,35 @@
           <div class="ctrl water-gen" style="margin-bottom:.5rem">
             <div class="ctrl-hdr">
               <div class="ctrl-name"><span id="ic-aguagen"></span>Agua · Genérica</div>
-              <span class="water-badge gen">máx. 50%</span>
+              <span class="water-badge gen">máx. 70%</span>
             </div>
             <div class="dual-row">
-              <input type="number" class="num-inp" id="aguagen-pct" value="40" min="20" max="50" step="0.5" oninput="onWaterPct('gen')">
+              <input type="number" class="num-inp" id="aguagen-pct" value="40" min="20" max="70" step="0.5" oninput="onWaterPct('gen')">
               <span class="dual-unit">%</span>
               <span class="dual-sep">=</span>
               <input type="number" class="num-inp wide" id="aguagen-gram" value="5000" min="1" max="999999" step="50" oninput="onWaterGram('gen')">
               <span class="dual-unit">g</span>
             </div>
             <div class="range-wrap">
-              <input type="range" class="ctrl-range gen" id="aguagen-range" min="20" max="50" value="40" step="0.5" oninput="onWaterRange('gen')">
+              <input type="range" class="ctrl-range gen" id="aguagen-range" min="20" max="70" value="40" step="0.5" oninput="onWaterRange('gen')">
             </div>
-            <div class="water-alert" id="warn-gen"></div>
           </div>
 
           <div class="ctrl water-pro">
             <div class="ctrl-hdr">
               <div class="ctrl-name"><span id="ic-aguapro"></span>Agua · La Fina PRO</div>
-              <span class="water-badge pro">máx. 60% · rec. 58%</span>
+              <span class="water-badge pro">máx. 70%</span>
             </div>
             <div class="dual-row">
-              <input type="number" class="num-inp" id="aguapro-pct" value="48" min="20" max="60" step="0.5" oninput="onWaterPct('pro')">
+              <input type="number" class="num-inp" id="aguapro-pct" value="48" min="20" max="70" step="0.5" oninput="onWaterPct('pro')">
               <span class="dual-unit">%</span>
               <span class="dual-sep">=</span>
               <input type="number" class="num-inp wide" id="aguapro-gram" value="6000" min="1" max="999999" step="50" oninput="onWaterGram('pro')">
               <span class="dual-unit">g</span>
             </div>
             <div class="range-wrap">
-              <input type="range" class="ctrl-range" id="aguapro-range" min="20" max="60" value="48" step="0.5" oninput="onWaterRange('pro')">
+              <input type="range" class="ctrl-range" id="aguapro-range" min="20" max="70" value="48" step="0.5" oninput="onWaterRange('pro')">
             </div>
-            <div class="water-alert ok show" id="ok-pro">
-              La Fina PRO soporta hasta <strong>60%</strong> de agua — recomendado y garantizado <strong>58%</strong>
-            </div>
-            <div class="water-alert" id="warn-pro"></div>
           </div>
         </div>
 
