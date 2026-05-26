@@ -4,8 +4,8 @@
 'use strict';
 
 let HARINA = 12500;
-const AGUA_MAX_GEN = 50;
-const AGUA_MAX_PRO = 58;
+const AGUA_MAX_GEN = 70;
+const AGUA_MAX_PRO = 70;
 const PIN_HASH = 'RklOQVBSTzIwMjY=';
 const PROD = { europea:'Fina Europea', hojaldre:'Fina Hojaldre', industrial:'Fina Industrial' };
 
@@ -295,7 +295,7 @@ function onIngrRange(n) { syncIngr(n, $(n+'-range').value, 'range'); recalc(); }
 
 function syncWater(side, pct, skip) {
   const isGen = side === 'gen';
-  const maxPct = isGen ? 50 : 60;
+  const maxPct = 70;
   const minPct = 20;
   pct = clamp(parseFloat(pct) || minPct, minPct, maxPct);
   S[isGen ? 'aguaGen' : 'aguaPro'] = pct;
@@ -311,24 +311,6 @@ function syncWater(side, pct, skip) {
   }
   if (skip !== 'range') setVal(pfx + '-range', pct);
   updateTrack(pfx + '-range', pct, minPct, maxPct, isGen);
-  if (isGen) {
-    const w = $('warn-gen'); if (!w) return;
-    if (pct > AGUA_MAX_GEN) {
-      w.textContent = 'Supera el máximo recomendado (50%) para margarinas genéricas.';
-      w.className = 'water-alert danger show';
-    } else { w.className = 'water-alert'; }
-  } else {
-    const ok = $('ok-pro'), wn = $('warn-pro');
-    if (!ok || !wn) return;
-    if (pct > AGUA_MAX_PRO) {
-      wn.textContent = 'Excede el máximo garantizado (58%) de La Fina PRO.';
-      wn.className = 'water-alert danger show'; ok.className = 'water-alert';
-    } else if (pct > AGUA_MAX_GEN) {
-      ok.className = 'water-alert ok show'; wn.className = 'water-alert';
-    } else {
-      ok.className = 'water-alert'; wn.className = 'water-alert';
-    }
-  }
 }
 function onWaterPct(s)   { syncWater(s, $('agua'+s+'-pct').value, 'pct'); recalc(); }
 function onWaterGram(s)  { syncWater(s, (parseFloat($('agua'+s+'-gram').value)||0)/HARINA*100, 'gram'); recalc(); }
